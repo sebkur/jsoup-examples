@@ -2,8 +2,19 @@ wrapper {
     gradleVersion = '6.5.1'
 }
 
-apply plugin: 'java'
-apply plugin: 'eclipse'
+buildscript {
+    repositories {
+        maven { url 'https://mvn.topobyte.de' }
+    }
+    dependencies {
+        classpath 'de.topobyte:gradle-launch-and-install-plugin:0.0.3'
+    }
+}
+
+apply plugin: 'application'
+apply plugin: 'de.topobyte.launch-and-install-gradle-plugin'
+
+startScripts.enabled = false
 
 group = pGroup
 version = pVersion
@@ -31,4 +42,12 @@ task copyDeps(type: Copy) {
 
 task createRuntime(dependsOn: [copyJars, copyDeps]) {
     description 'Setup the execution environment for the main scripts'
+}
+
+launchAndInstall {
+    installationPath = 'org/jsoup/examples'
+    makeselfLabel = 'jsoup-examples'
+    createScript(project, 'org.jsoup.examples.Wikipedia', 'jsoup-example-wikipedia')
+    createScript(project, 'org.jsoup.examples.ListLinks', 'jsoup-example-list-links')
+    createScript(project, 'org.jsoup.examples.HtmlToPlainText', 'jsoup-example-html-to-plaintext')
 }
